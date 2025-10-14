@@ -13,11 +13,24 @@ public class ToDoItemsController : ControllerBase
 {
 
     private static List<ToDoItem> items = [];
+    // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
     [HttpPost]
     public IActionResult Create(ToDoItemCreateRequestDto request)
     {
-        return Ok();
+        var item = request.ToDomain();
+
+        try
+        {
+            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
+            items.Add(item);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
+        }
+
+        return Created();
     }
 
     [HttpGet]
