@@ -3,6 +3,7 @@ namespace ToDoList.WebApi;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using ToDoList.Domain;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
@@ -12,7 +13,7 @@ using ToDoList.Domain.Models;
 public class ToDoItemsController : ControllerBase
 {
 
-    private static List<ToDoItem> items = [];
+    public static List<ToDoItem> items = [];
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
     [HttpPost]
@@ -127,5 +128,10 @@ public class ToDoItemsController : ControllerBase
     public void AddItemToStorage(ToDoItem item)
     {
         items.Add(item);
+    }
+
+    public void ClearStorage()
+    {
+        items.Clear();
     }
 }
