@@ -13,6 +13,7 @@ public class DeleteTests
     {
         // Arrange
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
         // Act
@@ -28,11 +29,12 @@ public class DeleteTests
     {
         // Arrange
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
         // Act
         var invalidId = 15;
-        var result = controller.DeleteByid(14);
+        var result = controller.DeleteByid(invalidId);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);

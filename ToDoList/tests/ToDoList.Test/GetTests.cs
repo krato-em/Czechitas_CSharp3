@@ -27,6 +27,7 @@ public class GetTests
             IsCompleted = false
         };
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
         controller.AddItemToStorage(todoItem1);
         controller.AddItemToStorage(todoItem2);
 
@@ -50,6 +51,7 @@ public class GetTests
     {
         // Arrange
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
         // Act
@@ -69,6 +71,7 @@ public class GetTests
     {
         // Arrange
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
         // Act

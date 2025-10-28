@@ -134,4 +134,14 @@ public class ToDoItemsController : ControllerBase
     {
         items.Clear();
     }
+
+    public List<ToDoItem> GetStoredToDoItems()
+    {
+        return items;
+    }
+
+    public List<int> GetStoredToDoItemsId()
+    {
+        return items.Select((item) => item.ToDoItemId).ToList();
+    }
 }
