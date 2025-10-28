@@ -6,6 +6,7 @@ using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
 
+[Collection("Sequential")]
 public class CreateTests
 {
     [Fact]
@@ -15,6 +16,9 @@ public class CreateTests
 
         // Arrange
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
+
+        // Act
         var request = new ToDoItemCreateRequestDto("addImte", "addDesc", true);
 
         var actionResult = controller.Create(request);

@@ -8,6 +8,7 @@ using ToDoList.WebApi;
 
 namespace ToDoList.Test;
 
+[Collection("Sequential")]
 public class UpdateTests
 {
     [Fact]
@@ -35,7 +36,7 @@ public class UpdateTests
 
         var updatedItem = storedItems.Find(i => i.ToDoItemId == existingId);
 
-        Assert.IsType<NoContent>(result);
+        Assert.IsType<NoContentResult>(result);
         Assert.NotNull(updatedItem);
         Assert.Equal(updatedName, updatedItem.Name);
         Assert.Equal(updatedDescription, updatedItem.Description);

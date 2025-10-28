@@ -6,6 +6,7 @@ using ToDoList.Domain.Models;
 using ToDoList.WebApi;
 using ToDoList.Test;
 
+[Collection("Sequential")]
 public class GetTests
 {
     [Fact]
