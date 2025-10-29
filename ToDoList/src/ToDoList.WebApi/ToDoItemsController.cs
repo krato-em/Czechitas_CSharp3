@@ -14,7 +14,7 @@ using ToDoList.Persistence;
 public class ToDoItemsController : ControllerBase
 {
 
-    private static List<ToDoItem> items = [];
+    public static List<ToDoItem> items = [];
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
     private readonly ToDoItemsContext context;
@@ -41,10 +41,11 @@ public class ToDoItemsController : ControllerBase
 
         try
         {
-            // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
-            // items.Add(item);
-            context.ToDoItems.Add(item);
-            context.SaveChanges();
+            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
+            items.Add(item);
+
+            // context.ToDoItems.Add(item);
+            // context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -64,8 +65,9 @@ public class ToDoItemsController : ControllerBase
         List<ToDoItem> itemsToGet;
         try
         {
-            // itemsToGet = items;
-            itemsToGet = context.ToDoItems.AsNoTracking().ToList();
+            itemsToGet = items;
+
+            // itemsToGet = context.ToDoItems.AsNoTracking().ToList();
         }
         catch (Exception ex)
         {
@@ -149,5 +151,19 @@ public class ToDoItemsController : ControllerBase
     public void AddItemToStorage(ToDoItem item)
     {
         items.Add(item);
+    }
+    public void ClearStorage()
+    {
+        items.Clear();
+    }
+
+    public List<ToDoItem> GetStoredToDoItems()
+    {
+        return items;
+    }
+
+    public List<int> GetStoredToDoItemsId()
+    {
+        return items.Select((item) => item.ToDoItemId).ToList();
     }
 }
