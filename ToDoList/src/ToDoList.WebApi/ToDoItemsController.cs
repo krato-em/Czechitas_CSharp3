@@ -3,17 +3,36 @@ namespace ToDoList.WebApi;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
+using ToDoList.Persistence;
 
 [Route("api/[controller]")] //localhost:500/api/ToDoItems
 [ApiController]
 public class ToDoItemsController : ControllerBase
 {
 
-    private static List<ToDoItem> items = [];
+    public static List<ToDoItem> items = [];
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
+
+    private readonly ToDoItemsContext context;
+
+    public ToDoItemsController(ToDoItemsContext context)
+    {
+        this.context = context;
+
+        // ToDoItem item = new ToDoItem
+        // {
+        //     Name = "Prvni ukol",
+        //     Description = "Prvni popisek",
+        //     IsCompleted = false
+        // };
+
+        // context.ToDoItems.Add(item);
+        // context.SaveChanges();
+    }
 
     [HttpPost]
     public IActionResult Create(ToDoItemCreateRequestDto request)
@@ -24,6 +43,9 @@ public class ToDoItemsController : ControllerBase
         {
             item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
             items.Add(item);
+
+            // context.ToDoItems.Add(item);
+            // context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -44,6 +66,8 @@ public class ToDoItemsController : ControllerBase
         try
         {
             itemsToGet = items;
+
+            // itemsToGet = context.ToDoItems.AsNoTracking().ToList();
         }
         catch (Exception ex)
         {
@@ -127,5 +151,19 @@ public class ToDoItemsController : ControllerBase
     public void AddItemToStorage(ToDoItem item)
     {
         items.Add(item);
+    }
+    public void ClearStorage()
+    {
+        items.Clear();
+    }
+
+    public List<ToDoItem> GetStoredToDoItems()
+    {
+        return items;
+    }
+
+    public List<int> GetStoredToDoItemsId()
+    {
+        return items.Select((item) => item.ToDoItemId).ToList();
     }
 }
