@@ -11,7 +11,7 @@ public class CreateTests
 {
     [Fact]
     public void Create_WithValidData_ReturnsCreatedResult()
-    {
+{
         ToDoItemsController.items.Clear();
 
         // Arrange

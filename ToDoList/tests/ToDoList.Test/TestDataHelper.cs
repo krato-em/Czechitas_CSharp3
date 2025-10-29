@@ -41,7 +41,6 @@ namespace ToDoList.Test
             controller.AddItemToStorage(toDoItem2);
             controller.AddItemToStorage(toDoItem3);
         }
-
         public static void ClearTestData(ToDoItemsController controller)
         {
             controller.ClearStorage();

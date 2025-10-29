@@ -3,7 +3,6 @@ namespace ToDoList.WebApi;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain;
 using ToDoList.Domain.DTOs;
@@ -42,10 +41,11 @@ public class ToDoItemsController : ControllerBase
 
         try
         {
-            // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
-            // items.Add(item);
-            context.ToDoItems.Add(item);
-            context.SaveChanges();
+            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
+            items.Add(item);
+
+            // context.ToDoItems.Add(item);
+            // context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -65,8 +65,9 @@ public class ToDoItemsController : ControllerBase
         List<ToDoItem> itemsToGet;
         try
         {
-            // itemsToGet = items;
-            itemsToGet = context.ToDoItems.AsNoTracking().ToList();
+            itemsToGet = items;
+
+            // itemsToGet = context.ToDoItems.AsNoTracking().ToList();
         }
         catch (Exception ex)
         {
@@ -151,7 +152,6 @@ public class ToDoItemsController : ControllerBase
     {
         items.Add(item);
     }
-
     public void ClearStorage()
     {
         items.Clear();

@@ -39,7 +39,6 @@ public class GetTests
 
         // Assert
         Assert.NotNull(value);
-
         var firstToDo = value.First();
         Assert.Equal(todoItem1.ToDoItemId, firstToDo.Id);
         Assert.Equal(todoItem1.Name, firstToDo.Name);
