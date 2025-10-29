@@ -33,6 +33,7 @@ public class GetTests
         controller.AddItemToStorage(todoItem2);
 
         // Act
+
         var result = controller.Read();
         var value = ActionResultExtensions.GetValue(result);
 
@@ -48,8 +49,6 @@ public class GetTests
     [Fact]
     public void Get_ItemById_ReturnItem()
     {
-        ToDoItemsController.items.Clear();
-
         // Arrange
         var controller = new ToDoItemsController();
         TestDataHelper.ClearTestData(controller);
@@ -70,8 +69,6 @@ public class GetTests
     [Fact]
     public void Get_ItemByInvaliId_ReturnErrorMessage()
     {
-        ToDoItemsController.items.Clear();
-
         // Arrange
         var controller = new ToDoItemsController();
         TestDataHelper.ClearTestData(controller);
