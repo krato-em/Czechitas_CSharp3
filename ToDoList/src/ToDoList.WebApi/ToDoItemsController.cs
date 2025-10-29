@@ -3,6 +3,7 @@ namespace ToDoList.WebApi;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain;
 using ToDoList.Domain.DTOs;
@@ -14,7 +15,7 @@ using ToDoList.Persistence;
 public class ToDoItemsController : ControllerBase
 {
 
-    private static List<ToDoItem> items = [];
+    public static List<ToDoItem> items = [];
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
     private readonly ToDoItemsContext context;
@@ -149,5 +150,20 @@ public class ToDoItemsController : ControllerBase
     public void AddItemToStorage(ToDoItem item)
     {
         items.Add(item);
+    }
+
+    public void ClearStorage()
+    {
+        items.Clear();
+    }
+
+    public List<ToDoItem> GetStoredToDoItems()
+    {
+        return items;
+    }
+
+    public List<int> GetStoredToDoItemsId()
+    {
+        return items.Select((item) => item.ToDoItemId).ToList();
     }
 }

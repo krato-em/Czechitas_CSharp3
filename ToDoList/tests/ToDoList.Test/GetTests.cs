@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
+using ToDoList.Test;
 
+[Collection("Sequential")]
 public class GetTests
 {
     [Fact]
@@ -26,62 +28,60 @@ public class GetTests
             IsCompleted = false
         };
         var controller = new ToDoItemsController();
+        TestDataHelper.ClearTestData(controller);
         controller.AddItemToStorage(todoItem1);
         controller.AddItemToStorage(todoItem2);
 
         // Act
+
         var result = controller.Read();
-        var value = result;
+        var value = ActionResultExtensions.GetValue(result);
 
         // Assert
         Assert.NotNull(value);
+
+        var firstToDo = value.First();
+        Assert.Equal(todoItem1.ToDoItemId, firstToDo.Id);
+        Assert.Equal(todoItem1.Name, firstToDo.Name);
+        Assert.Equal(todoItem1.Description, firstToDo.Description);
+        Assert.Equal(todoItem1.IsCompleted, firstToDo.IsCompleted);
     }
 
     [Fact]
-    public void DeleteTest()
+    public void Get_ItemById_ReturnItem()
     {
-        ToDoItemsController.items.Clear();
-
         // Arrange
         var controller = new ToDoItemsController();
-        ToDoItemsController.items.Add(new ToDoItem
-        {
-            ToDoItemId = 1,
-            Name = "ItemToDelete",
-            Description = "TestDelete",
-            IsCompleted = false
-        });
+        TestDataHelper.ClearTestData(controller);
+        TestDataHelper.SeedTestData(controller);
 
         // Act
-        var result = controller.DeleteByid(1);
+        var id = 2;
+        var result = controller.ReadById(id);
+        var value = ActionResultExtensions.GetValue(result);
+
         // Assert
-        Assert.IsType<NoContentResult>(result);
-        Assert.DoesNotContain(ToDoItemsController.items, item => item.ToDoItemId == 1);
+        Assert.Equal(id, value.Id);
+        Assert.Equal(TestDataHelper.toDoItem2.Name, value.Name);
+        Assert.Equal(TestDataHelper.toDoItem2.Description, value.Description);
+        Assert.Equal(TestDataHelper.toDoItem2.IsCompleted, value.IsCompleted);
     }
 
     [Fact]
-    public void CreateTest()
+    public void Get_ItemByInvaliId_ReturnErrorMessage()
     {
-        ToDoItemsController.items.Clear();
-
         // Arrange
         var controller = new ToDoItemsController();
-        var request = new ToDoItemCreateRequestDto("addImte", "addDesc", true);
+        TestDataHelper.ClearTestData(controller);
+        TestDataHelper.SeedTestData(controller);
 
-        var actionResult = controller.Create(request);
-        var result = actionResult as CreatedAtActionResult;
+        // Act
+        var invalidId = 15;
+        var result = controller.ReadById(invalidId);
+        var value = ActionResultExtensions.GetValue(result);
 
-        Assert.NotNull(result);
-        Assert.Equal(nameof(ToDoItemsController.ReadById), result.ActionName);
-
-        var dto = result.Value as ToDoItemGetResponseDto;
-        Assert.NotNull(dto);
-        Assert.Equal("addImte", dto.Name);
-        Assert.Equal("addDesc", dto.Description);
-        Assert.Equal(request.IsCompleted, dto.IsCompleted);
-        Assert.Equal(1, dto.Id);
-
-        Assert.Single(ToDoItemsController.items);
-        Assert.Equal(1, ToDoItemsController.items[0].ToDoItemId);
+        // Assert
+        Assert.Null(value);
+        Assert.DoesNotContain(ToDoItemsController.items, item => item.ToDoItemId == invalidId);
     }
 }
