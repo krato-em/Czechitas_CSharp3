@@ -27,4 +27,8 @@
     <ProjectReference Include="..\..\src\ToDoList.WebApi\ToDoList.WebApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IntegrationTests\data\" />
+  </ItemGroup>
+
 </Project>

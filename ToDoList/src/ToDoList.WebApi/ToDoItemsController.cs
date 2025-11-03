@@ -14,7 +14,7 @@ using ToDoList.Persistence;
 public class ToDoItemsController : ControllerBase
 {
 
-    public static List<ToDoItem> items = [];
+    // public static List<ToDoItem> items = [];
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
     private readonly ToDoItemsContext context;
@@ -41,11 +41,11 @@ public class ToDoItemsController : ControllerBase
 
         try
         {
-            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
-            items.Add(item);
+            // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
+            // items.Add(item);
 
-            // context.ToDoItems.Add(item);
-            // context.SaveChanges();
+            context.ToDoItems.Add(item);
+            context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -65,16 +65,14 @@ public class ToDoItemsController : ControllerBase
         List<ToDoItem> itemsToGet;
         try
         {
-            itemsToGet = items;
-
-            // itemsToGet = context.ToDoItems.AsNoTracking().ToList();
+            // itemsToGet = items;
+            itemsToGet = context.ToDoItems.AsNoTracking().ToList();
         }
         catch (Exception ex)
         {
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
 
-        //respond to client
         return (itemsToGet is null)
             ? NotFound() //404
             : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
@@ -86,14 +84,15 @@ public class ToDoItemsController : ControllerBase
         ToDoItem? itemToGet;
         try
         {
-            itemToGet = items.Find(i => i.ToDoItemId == toDoItemId);
+            // itemToGet = items.Find(i => i.ToDoItemId == toDoItemId);
+            // itemToGet = context.ToDoItems.Single(item => item.ToDoItemId == toDoItemId);
+            itemToGet = context.ToDoItems.AsNoTracking().Single(item => item.ToDoItemId == toDoItemId);
         }
         catch (Exception ex)
         {
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
 
-        //respond to client
         return (itemToGet is null)
             ? NotFound() //404
             : Ok(ToDoItemGetResponseDto.FromDomain(itemToGet)); //200
@@ -109,48 +108,71 @@ public class ToDoItemsController : ControllerBase
         try
         {
             //retrieve the item
-            var itemIndexToUpdate = items.FindIndex(i => i.ToDoItemId == toDoItemId);
-            if (itemIndexToUpdate == -1)
+
+            // var itemIndexToUpdate = items.FindIndex(i => i.ToDoItemId == toDoItemId);
+            // if (itemIndexToUpdate == -1)
+            // {
+            //     return NotFound(); //404
+            // }
+            // updatedItem.ToDoItemId = toDoItemId;
+            // items[itemIndexToUpdate] = updatedItem;
+
+            var itemToUpdate = context.ToDoItems.Find(toDoItemId);
+            if (itemToUpdate == null)
             {
-                return NotFound(); //404
+                return NotFound();
             }
-            updatedItem.ToDoItemId = toDoItemId;
-            items[itemIndexToUpdate] = updatedItem;
+
+            itemToUpdate.Name = updatedItem.Name;
+            itemToUpdate.Description = updatedItem.Description;
+            itemToUpdate.IsCompleted = updatedItem.IsCompleted;
+
+            context.SaveChanges();
         }
         catch (Exception ex)
         {
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
 
-        //respond to client
         return NoContent(); //204
     }
 
     [HttpDelete("{todoItemId:int}")]
     public IActionResult DeleteByid(int todoItemId)
     {
-        //try to delete the item
         try
         {
-            var itemToDelete = items.Find(i => i.ToDoItemId == todoItemId);
+            // var itemToDelete = items.Find(i => i.ToDoItemId == todoItemId);
+            // if (itemToDelete is null)
+            // {
+            //     return NotFound(); //404
+            // }
+            // items.Remove(itemToDelete);
+
+            // Option 1 - I'm making sure that object to be deleted really exists in the db
+            var itemToDelete = context.ToDoItems.Find(todoItemId);
             if (itemToDelete is null)
             {
                 return NotFound(); //404
             }
-            items.Remove(itemToDelete);
+            context.ToDoItems.Remove(itemToDelete);
+
+            // // Option 2 - Found in EF documentation. Shorter code, single line. But I'm not throwing NotFound if the item to be deleted doesn't exist
+            // context.Remove(context.ToDoItems.Single(x => x.ToDoItemId == todoItemId));
+            context.SaveChanges();
         }
         catch (Exception ex)
         {
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
         }
 
-        //respond to client
         return NoContent(); //204
     }
 
     public void AddItemToStorage(ToDoItem item)
     {
-        items.Add(item);
+        // items.Add(item);
+        context.Add(item);
     }
     public void ClearStorage()
     {
@@ -159,11 +181,13 @@ public class ToDoItemsController : ControllerBase
 
     public List<ToDoItem> GetStoredToDoItems()
     {
-        return items;
+        var data = context.ToDoItems.ToList();
+        return data;
     }
 
     public List<int> GetStoredToDoItemsId()
     {
-        return items.Select((item) => item.ToDoItemId).ToList();
+        var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
+        return data;
     }
 }
