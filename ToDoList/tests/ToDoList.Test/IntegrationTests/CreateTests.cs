@@ -4,6 +4,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
+using ToDoList.Persistence;
 using ToDoList.WebApi;
 
 [Collection("Sequential")]
@@ -12,10 +13,10 @@ public class CreateTests
     [Fact]
     public void Create_WithValidData_ReturnsCreatedResult()
 {
-        ToDoItemsController.items.Clear();
+        var context = new ToDoItemsContext("Data Source=../../../IntegrationTests/data/localdb_test.db");
 
         // Arrange
-        var controller = new ToDoItemsController();
+        var controller = new ToDoItemsController(context);
         TestDataHelper.ClearTestData(controller);
 
         // Act
@@ -34,7 +35,8 @@ public class CreateTests
         Assert.Equal(request.IsCompleted, dto.IsCompleted);
         Assert.Equal(1, dto.Id);
 
-        Assert.Single(ToDoItemsController.items);
-        Assert.Equal(1, ToDoItemsController.items[0].ToDoItemId);
+        // Assert.Single(ToDoItemsController.items);
+        // Assert.Equal(1, ToDoItemsController.items[0].ToDoItemId);
+        Assert.Equal(1, context.ToDoItems.First().ToDoItemId);
     }
 }
