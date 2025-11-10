@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
+using ToDoList.Persistence;
 
 namespace ToDoList.Test;
 
@@ -15,7 +16,8 @@ public class UpdateTests
     public void UpdateById_ExistingId_ReturnsNoContent()
     {
         // Arrange
-        var controller = new ToDoItemsController();
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
+        var controller = new ToDoItemsController(context);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
@@ -47,7 +49,8 @@ public class UpdateTests
     public void UpdateById_NonExistingId_ReturnsNotFound()
     {
         // Arrange
-        var controller = new ToDoItemsController();
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
+        var controller = new ToDoItemsController(context);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 

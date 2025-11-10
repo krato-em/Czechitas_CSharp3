@@ -12,8 +12,8 @@ public class CreateTests
 {
     [Fact]
     public void Create_WithValidData_ReturnsCreatedResult()
-{
-        var context = new ToDoItemsContext("Data Source=../../../IntegrationTests/data/localdb_test.db");
+    {
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
 
         // Arrange
         var controller = new ToDoItemsController(context);
@@ -33,10 +33,6 @@ public class CreateTests
         Assert.Equal("addImte", dto.Name);
         Assert.Equal("addDesc", dto.Description);
         Assert.Equal(request.IsCompleted, dto.IsCompleted);
-        Assert.Equal(1, dto.Id);
-
-        // Assert.Single(ToDoItemsController.items);
-        // Assert.Equal(1, ToDoItemsController.items[0].ToDoItemId);
-        Assert.Equal(1, context.ToDoItems.First().ToDoItemId);
+        Assert.Single(controller.GetStoredToDoItems());
     }
 }

@@ -172,11 +172,21 @@ public class ToDoItemsController : ControllerBase
     public void AddItemToStorage(ToDoItem item)
     {
         // items.Add(item);
-        context.Add(item);
+        // context.Add(item);
+        context.ToDoItems.Add(item);
+        context.SaveChanges();
     }
     public void ClearStorage()
     {
-        items.Clear();
+        // items.Clear();
+        // context.Database.ExecuteSqlRaw("TRUNCATE TABLE [ToDoItems]");
+        // var rows = from o in context.ToDoItems select o;
+        // foreach (var row in rows)
+        // {
+        //     context.ToDoItems.Remove(row);
+        // }
+        context.ToDoItems.ExecuteDelete();
+        context.SaveChanges();
     }
 
     public List<ToDoItem> GetStoredToDoItems()

@@ -42,5 +42,5 @@ Content-Type: application/json
 ###
 
 //Delete exisiting ToDoItem by id
-@itemToDeleteId = 1
+@itemToDeleteId = 4
 DELETE {{host}}:{{port}}/{{endpoint}}/{{itemToDeleteId}}

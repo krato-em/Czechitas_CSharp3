@@ -5,6 +5,7 @@ using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
 using ToDoList.Test;
+using ToDoList.Persistence;
 
 [Collection("Sequential")]
 public class GetTests
@@ -16,18 +17,19 @@ public class GetTests
         var todoItem1 = new ToDoItem
         {
             ToDoItemId = 1,
-            Name = "Test Item",
+            Name = "Test Item 1",
             Description = "Popis",
             IsCompleted = false
         };
         var todoItem2 = new ToDoItem
         {
-            ToDoItemId = 1,
-            Name = "Test Item",
+            ToDoItemId = 2,
+            Name = "Test Item 2",
             Description = "Popis",
             IsCompleted = false
         };
-        var controller = new ToDoItemsController();
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
+        var controller = new ToDoItemsController(context);
         TestDataHelper.ClearTestData(controller);
         controller.AddItemToStorage(todoItem1);
         controller.AddItemToStorage(todoItem2);
@@ -50,7 +52,8 @@ public class GetTests
     public void Get_ItemById_ReturnItem()
     {
         // Arrange
-        var controller = new ToDoItemsController();
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
+        var controller = new ToDoItemsController(context);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
@@ -70,17 +73,21 @@ public class GetTests
     public void Get_ItemByInvaliId_ReturnErrorMessage()
     {
         // Arrange
-        var controller = new ToDoItemsController();
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
+        var controller = new ToDoItemsController(context);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
         // Act
-        var invalidId = 15;
+        var invalidId = controller.GetStoredToDoItemsId().Last() + 2;
         var result = controller.ReadById(invalidId);
-        var value = ActionResultExtensions.GetValue(result);
 
         // Assert
-        Assert.Null(value);
-        Assert.DoesNotContain(ToDoItemsController.items, item => item.ToDoItemId == invalidId);
+        Assert.NotNull(result.Result);
+        var objectResult = result.Result as ObjectResult;
+        Assert.Equal(500, objectResult.StatusCode);
+
+        var actualItems = controller.GetStoredToDoItems();
+        Assert.DoesNotContain(actualItems, item => item.ToDoItemId == invalidId);
     }
 }

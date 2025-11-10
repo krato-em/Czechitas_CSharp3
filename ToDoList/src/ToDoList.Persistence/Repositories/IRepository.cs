@@ -1,0 +1,10 @@
+namespace ToDoList.Persistence.Repositories
+{
+    using ToDoList.Domain.Models;
+
+    public interface IRepository<T>
+        where T : class
+    {
+        public void Create(Task item);
+    }
+}
