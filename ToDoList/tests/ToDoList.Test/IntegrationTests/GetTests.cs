@@ -29,7 +29,7 @@ public class GetTests
             IsCompleted = false
         };
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context);
+        var controller = new ToDoItemsController(context: context, repository: null);
         TestDataHelper.ClearTestData(controller);
         controller.AddItemToStorage(todoItem1);
         controller.AddItemToStorage(todoItem2);
@@ -53,7 +53,7 @@ public class GetTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context);
+        var controller = new ToDoItemsController(context: context, repository: null);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
@@ -74,7 +74,7 @@ public class GetTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context);
+        var controller = new ToDoItemsController(context: context, repository: null);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
