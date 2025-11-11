@@ -8,6 +8,7 @@ using ToDoList.Domain;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence;
+using ToDoList.Persistence.Repositories;
 
 [Route("api/[controller]")] //localhost:500/api/ToDoItems
 [ApiController]
@@ -18,10 +19,11 @@ public class ToDoItemsController : ControllerBase
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
     private readonly ToDoItemsContext context;
-
-    public ToDoItemsController(ToDoItemsContext context)
+    private readonly IRepository<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
+    public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
     {
         this.context = context;
+        this.repository = repository;
 
         // ToDoItem item = new ToDoItem
         // {
@@ -41,11 +43,15 @@ public class ToDoItemsController : ControllerBase
 
         try
         {
+            // old implementation before we stored data in a database
             // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
             // items.Add(item);
 
-            context.ToDoItems.Add(item);
-            context.SaveChanges();
+            // This part is moved to ToDoItemsRepository class so that we don't have a tight coupling and that this class doesn't directly communicate with the db layer
+            // context.ToDoItems.Add(item);
+            // context.SaveChanges();
+
+            repository.Create(item);
         }
         catch (Exception ex)
         {
@@ -62,11 +68,14 @@ public class ToDoItemsController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
-        List<ToDoItem> itemsToGet;
+        // List<ToDoItem> itemsToGet;
+        IEnumerable<ToDoItem> itemsToGet;
+
         try
         {
             // itemsToGet = items;
-            itemsToGet = context.ToDoItems.AsNoTracking().ToList();
+            // itemsToGet = context.ToDoItems.AsNoTracking().ToList();
+            itemsToGet = repository.ReadAll();
         }
         catch (Exception ex)
         {
@@ -86,7 +95,8 @@ public class ToDoItemsController : ControllerBase
         {
             // itemToGet = items.Find(i => i.ToDoItemId == toDoItemId);
             // itemToGet = context.ToDoItems.Single(item => item.ToDoItemId == toDoItemId);
-            itemToGet = context.ToDoItems.AsNoTracking().Single(item => item.ToDoItemId == toDoItemId);
+            // itemToGet = context.ToDoItems.AsNoTracking().Single(item => item.ToDoItemId == toDoItemId);
+            itemToGet = repository.ReadById(toDoItemId);
         }
         catch (Exception ex)
         {
@@ -103,6 +113,7 @@ public class ToDoItemsController : ControllerBase
     {
         //map to Domain object as soon as possible
         var updatedItem = request.ToDomain();
+        updatedItem.ToDoItemId = toDoItemId;
 
         //try to update the item by retrieving it with given id
         try
@@ -117,7 +128,8 @@ public class ToDoItemsController : ControllerBase
             // updatedItem.ToDoItemId = toDoItemId;
             // items[itemIndexToUpdate] = updatedItem;
 
-            var itemToUpdate = context.ToDoItems.Find(toDoItemId);
+            // var itemToUpdate = context.ToDoItems.Find(toDoItemId);
+            var itemToUpdate = repository.ReadById(toDoItemId);
             if (itemToUpdate == null)
             {
                 return NotFound();
@@ -127,7 +139,8 @@ public class ToDoItemsController : ControllerBase
             itemToUpdate.Description = updatedItem.Description;
             itemToUpdate.IsCompleted = updatedItem.IsCompleted;
 
-            context.SaveChanges();
+            // context.SaveChanges();
+            repository.Update(updatedItem);
         }
         catch (Exception ex)
         {
@@ -142,20 +155,14 @@ public class ToDoItemsController : ControllerBase
     {
         try
         {
-            // var itemToDelete = items.Find(i => i.ToDoItemId == todoItemId);
-            // if (itemToDelete is null)
-            // {
-            //     return NotFound(); //404
-            // }
-            // items.Remove(itemToDelete);
 
-            // Option 1 - I'm making sure that object to be deleted really exists in the db
-            var itemToDelete = context.ToDoItems.Find(todoItemId);
+            var itemToDelete = repository.ReadById(todoItemId);
             if (itemToDelete is null)
             {
                 return NotFound(); //404
             }
-            context.ToDoItems.Remove(itemToDelete);
+
+            repository.DeleteById(todoItemId);
 
             // // Option 2 - Found in EF documentation. Shorter code, single line. But I'm not throwing NotFound if the item to be deleted doesn't exist
             // context.Remove(context.ToDoItems.Single(x => x.ToDoItemId == todoItemId));

@@ -16,7 +16,7 @@ public class CreateTests
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
 
         // Arrange
-        var controller = new ToDoItemsController(context);
+        var controller = new ToDoItemsController(context: context, repository: null);
         TestDataHelper.ClearTestData(controller);
 
         // Act

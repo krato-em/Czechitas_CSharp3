@@ -17,7 +17,7 @@ public class UpdateTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context);
+        var controller = new ToDoItemsController(context: context, repository: null);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
@@ -50,7 +50,7 @@ public class UpdateTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context);
+        var controller = new ToDoItemsController(context: context, repository: null);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
