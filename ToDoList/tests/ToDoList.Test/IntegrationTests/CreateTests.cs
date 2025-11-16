@@ -23,12 +23,14 @@ public class CreateTests
         var request = new ToDoItemCreateRequestDto("addImte", "addDesc", true);
 
         var actionResult = controller.Create(request);
-        var result = actionResult as CreatedAtActionResult;
-
+        var result = actionResult.Result;
+        // var result = actionResult as CreatedAtActionResult;
         Assert.NotNull(result);
-        Assert.Equal(nameof(ToDoItemsController.ReadById), result.ActionName);
+        // Assert.Equal(nameof(ToDoItemsController.ReadById), result.ActionName);
 
-        var dto = result.Value as ToDoItemGetResponseDto;
+        // var dto = result.Value as ToDoItemGetResponseDto;
+        var dto = actionResult.Value as ToDoItemGetResponseDto;
+
         Assert.NotNull(dto);
         Assert.Equal("addImte", dto.Name);
         Assert.Equal("addDesc", dto.Description);

@@ -18,35 +18,45 @@ public class ToDoItemsController : ControllerBase
     // public static List<ToDoItem> items = [];
     // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
 
-    private readonly ToDoItemsContext context;
+    // private readonly IRepository<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
+    // public ToDoItemsController(IRepository<ToDoItem> repository)
+    // {
+    //     this.repository = repository;
+
+    //     // ToDoItem item = new ToDoItem
+    //     // {
+    //     //     Name = "Prvni ukol",
+    //     //     Description = "Prvni popisek",
+    //     //     IsCompleted = false
+    //     // };
+
+    //     // context.ToDoItems.Add(item);
+    //     // context.SaveChanges();
+    // }
+
+    // // public ToDoItemsController()
+    // // {
+    // // }
     private readonly IRepository<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
+    private readonly ToDoItemsContext context;
+
+    public ToDoItemsController(IRepository<ToDoItem> repository)
+    {
+        this.repository = repository;
+    }
     public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
     {
         this.context = context;
         this.repository = repository;
-
-        // ToDoItem item = new ToDoItem
-        // {
-        //     Name = "Prvni ukol",
-        //     Description = "Prvni popisek",
-        //     IsCompleted = false
-        // };
-
-        // context.ToDoItems.Add(item);
-        // context.SaveChanges();
     }
 
     [HttpPost]
-    public IActionResult Create(ToDoItemCreateRequestDto request)
+    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
     {
         var item = request.ToDomain();
 
         try
         {
-            // old implementation before we stored data in a database
-            // item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
-            // items.Add(item);
-
             // This part is moved to ToDoItemsRepository class so that we don't have a tight coupling and that this class doesn't directly communicate with the db layer
             // context.ToDoItems.Add(item);
             // context.SaveChanges();
@@ -68,7 +78,6 @@ public class ToDoItemsController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
-        // List<ToDoItem> itemsToGet;
         IEnumerable<ToDoItem> itemsToGet;
 
         try
