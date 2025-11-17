@@ -15,7 +15,7 @@ public class DeleteTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context: context, repository: null);
+        var controller = new ToDoItemsController(repository: null);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
         var existingId = controller.GetStoredToDoItems().First().ToDoItemId;
@@ -34,12 +34,12 @@ public class DeleteTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context: context, repository: null);
+        var controller = new ToDoItemsController(repository: null);
         TestDataHelper.ClearTestData(controller);
         TestDataHelper.SeedTestData(controller);
 
         // Act
-        var invalidId = controller.GetStoredToDoItemsId().Last() +2;
+        var invalidId = controller.GetStoredToDoItemsId().Last() + 2;
         // invalidId = invalidId[0];
         // var invalidId = 1;
         var result = controller.DeleteByid(invalidId);
