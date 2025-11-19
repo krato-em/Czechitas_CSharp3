@@ -1,0 +1,21 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+<p>Hodnota: @IncrementCounter</p>
+<button @onclick="IncrementCounter">Increment Counter</button>
+
+Welcome to your new app.
+
+@code {
+    public int counter = 1;
+
+    public void IncrementCounter()
+    {
+        counter++;
+    }
+}
+
+<Dashboard />
