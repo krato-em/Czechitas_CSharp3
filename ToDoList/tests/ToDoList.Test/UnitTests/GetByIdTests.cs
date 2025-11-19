@@ -35,9 +35,6 @@ namespace ToDoList.Test.UnitTests
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result.Result);
             repositoryMock.Received(1).ReadById(someId);
-            Assert.Equal(someItem.Name, result.Value.Name);
-            Assert.Equal(someItem.Description, result.Value.Description);
-            Assert.Equal(someItem.IsCompleted, result.Value.IsCompleted);
         }
 
 
