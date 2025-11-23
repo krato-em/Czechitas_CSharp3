@@ -1,0 +1,31 @@
+﻿@using ToDoList.Frontend.Views
+<h2>Dashboard</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Descriptioin</th>
+            <th>Completed?</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@item.ToDoItemId</td>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>@(item.IsCompleted ? "yes" : "no")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    List<ToDoItemView> items = new()
+{
+new ToDoItemView { ToDoItemId = 1, Name = "todoitem1", Description = "desc1", IsCompleted = false },
+new ToDoItemView { ToDoItemId = 2, Name = "todoitem2", Description = "desc2", IsCompleted = true },
+new ToDoItemView { ToDoItemId = 3, Name = "todoitem3", Description = "desc3", IsCompleted = false }
+};
+}
