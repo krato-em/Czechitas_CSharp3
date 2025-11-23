@@ -1,5 +1,6 @@
 ﻿@using ToDoList.Frontend.Views
 <h2>Dashboard</h2>
+
 <table>
     <thead>
         <tr>
@@ -7,6 +8,10 @@
             <th>Name</th>
             <th>Descriptioin</th>
             <th>Completed?</th>
+        </tr>
+        <tr>
+            <td><button @onclick="SortById">Sort By ID</button></td>
+            <td><button @onclick="SortByName">Sort By Name</button></td>
         </tr>
     </thead>
     <tbody>
@@ -16,16 +21,53 @@
                 <td>@item.ToDoItemId</td>
                 <td>@item.Name</td>
                 <td>@item.Description</td>
-                <td>@(item.IsCompleted ? "yes" : "no")</td>
+                <td>@(item.IsCompleted ? "Finished" : "Not finished")</td>
             </tr>
+
         }
     </tbody>
 </table>
+
+
 @code {
     List<ToDoItemView> items = new()
 {
-new ToDoItemView { ToDoItemId = 1, Name = "todoitem1", Description = "desc1", IsCompleted = false },
-new ToDoItemView { ToDoItemId = 2, Name = "todoitem2", Description = "desc2", IsCompleted = true },
-new ToDoItemView { ToDoItemId = 3, Name = "todoitem3", Description = "desc3", IsCompleted = false }
+new ToDoItemView( 1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
+new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
+new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
+new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
+new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
 };
+
+    private bool isAscencingId = true;
+    private bool isAscendingName = true;
+    private void SortById()
+    {
+        if (isAscencingId)
+        {
+            items = items.OrderByDescending(item => item.ToDoItemId).ToList();
+            isAscencingId = false;
+        }
+        else
+        {
+            items = items.OrderBy(item => item.ToDoItemId).ToList();
+            isAscencingId = true;
+        }
+    }
+
+    private void SortByName()
+    {
+        if (isAscendingName)
+        {
+            items = items.OrderByDescending(item => item.Name).ToList();
+            isAscendingName = false;
+        }
+        else
+        {
+            items = items.OrderBy(item => item.Name).ToList();
+            isAscendingName = true;
+        }
+    }
+
+    //ToDo: add method to show only not-completed items + method that shows all items again
 }
