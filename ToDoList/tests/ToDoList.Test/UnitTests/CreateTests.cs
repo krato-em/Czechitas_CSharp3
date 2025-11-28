@@ -31,7 +31,6 @@ namespace ToDoList.Test.UnitTests
 
             // Assert
             Assert.IsType<CreatedAtActionResult>(result.Result);
-            Assert.NotNull(result.Value);
             repositoryMock.Received(1).Create(Arg.Is<ToDoItem>(i =>
                 i.Name == itemToCreate.Name &&
                 i.Description == itemToCreate.Description

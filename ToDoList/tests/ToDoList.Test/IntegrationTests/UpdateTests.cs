@@ -1,11 +1,8 @@
-using System;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
-using ToDoList.Domain.Models;
 using ToDoList.WebApi;
 using ToDoList.Persistence;
+using ToDoList.Persistence.Repositories;
 
 namespace ToDoList.Test;
 
@@ -17,11 +14,12 @@ public class UpdateTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(repository: null);
-        TestDataHelper.ClearTestData(controller);
-        TestDataHelper.SeedTestData(controller);
+        var repository = new ToDoItemsRepository(context);
+        var controller = new ToDoItemsController(repository);
+        TestDataHelper.ClearTestData(repository);
+        TestDataHelper.SeedTestData(repository);
 
-        var existingToDoItemsId = controller.GetStoredToDoItemsId();
+        var existingToDoItemsId = repository.GetStoredToDoItemsId();
         var existingId = existingToDoItemsId.First();
 
         var updatedName = "Updated Item";
@@ -33,8 +31,7 @@ public class UpdateTests
         var result = controller.UpdateById(existingId, toDoItemDto);
 
         // Assert
-        // NOTE: myslenka za tim, proc ulozene ToDoItems ziskavam takto je ta, ze se chci vyhnout pouziti jinych HTTP metod, ktere testuji jinde
-        var storedItems = controller.GetStoredToDoItems();
+        var storedItems = repository.GetStoredToDoItems();
 
         var updatedItem = storedItems.Find(i => i.ToDoItemId == existingId);
 
@@ -50,11 +47,12 @@ public class UpdateTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(repository: null);
-        TestDataHelper.ClearTestData(controller);
-        TestDataHelper.SeedTestData(controller);
+        var repository = new ToDoItemsRepository(context);
+        var controller = new ToDoItemsController(repository);
+        TestDataHelper.ClearTestData(repository);
+        TestDataHelper.SeedTestData(repository);
 
-        var nonExistingId = controller.GetStoredToDoItemsId().Max() + 1;
+        var nonExistingId = repository.GetStoredToDoItemsId().Max() + 1;
         var toDoItemDto = new ToDoItemUpdateRequestDto("Updated Item", "This item was updated", true);
 
         // Act

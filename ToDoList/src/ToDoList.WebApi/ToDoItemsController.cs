@@ -159,36 +159,4 @@ public class ToDoItemsController : ControllerBase
 
         return NoContent(); //204
     }
-
-    public void AddItemToStorage(ToDoItem item)
-    {
-        // items.Add(item);
-        // context.Add(item);
-        context.ToDoItems.Add(item);
-        context.SaveChanges();
-    }
-    public void ClearStorage()
-    {
-        // items.Clear();
-        // context.Database.ExecuteSqlRaw("TRUNCATE TABLE [ToDoItems]");
-        // var rows = from o in context.ToDoItems select o;
-        // foreach (var row in rows)
-        // {
-        //     context.ToDoItems.Remove(row);
-        // }
-        context.ToDoItems.ExecuteDelete();
-        context.SaveChanges();
-    }
-
-    public List<ToDoItem> GetStoredToDoItems()
-    {
-        var data = context.ToDoItems.ToList();
-        return data;
-    }
-
-    public List<int> GetStoredToDoItemsId()
-    {
-        var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
-        return data;
-    }
 }
