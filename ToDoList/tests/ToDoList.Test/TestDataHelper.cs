@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.VisualBasic;
 using ToDoList.Domain.Models;
-using ToDoList.WebApi;
+using ToDoList.Persistence.Repositories;
 
 namespace ToDoList.Test
 {
@@ -32,18 +26,18 @@ namespace ToDoList.Test
             ToDoItemId = 3,
             Name = "Test Item 3",
             Description = "This is item 3",
-            IsCompleted = false
+            IsCompleted = true
         };
 
-        public static void SeedTestData(ToDoItemsController controller)
+        public static void SeedTestData(ToDoItemsRepository repository)
         {
-            controller.AddItemToStorage(toDoItem1);
-            controller.AddItemToStorage(toDoItem2);
-            controller.AddItemToStorage(toDoItem3);
+            repository.AddItemToStorage(toDoItem1);
+            repository.AddItemToStorage(toDoItem2);
+            repository.AddItemToStorage(toDoItem3);
         }
-        public static void ClearTestData(ToDoItemsController controller)
+        public static void ClearTestData(ToDoItemsRepository repository)
         {
-            controller.ClearStorage();
+            repository.ClearStorage();
         }
     }
 }

@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
     builder.Services.AddSwaggerGen();
     builder.Services.AddDbContext<ToDoItemsContext>();
-    builder.Services.AddScoped<IRepository<ToDoItem>, ToDoItemsRepository>(); // pokud nekdo ze zaregistrovanych kontroleru bude potrebovat IRepository interface, tak mu dej ToDoItemsRepository() tridu
+    builder.Services.AddScoped<IRepositoryAsync<ToDoItem>, ToDoItemsRepository>(); // pokud nekdo ze zaregistrovanych kontroleru bude potrebovat IRepository interface, tak mu dej ToDoItemsRepository() tridu
 }
 
 var app = builder.Build();

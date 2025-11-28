@@ -55,5 +55,28 @@ namespace ToDoList.Persistence.Repositories
             var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
             return data;
         }
+
+        // public void AddItemToStorage(ToDoItem item)
+        // {
+        //     context.ToDoItems.Add(item);
+        //     context.SaveChanges();
+        // }
+
+        // public void ClearStorage()
+        // {
+        //     context.ToDoItems.ExecuteDelete();
+        //     context.SaveChanges();
+        // }
+
+        // public List<ToDoItem> GetStoredToDoItems()
+        // {
+        //     var data = context.ToDoItems.ToList();
+        //     return data;
+        // }
+        // public List<int> GetStoredToDoItemsId()
+        // {
+        //     var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
+        //     return data;
+        // }
     }
 }
