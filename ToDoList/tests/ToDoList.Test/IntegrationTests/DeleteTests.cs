@@ -1,11 +1,9 @@
 namespace ToDoList.Test;
 
-using System;
 using Microsoft.AspNetCore.Mvc;
-using ToDoList.Domain.DTOs;
-using ToDoList.Domain.Models;
 using ToDoList.WebApi;
 using ToDoList.Persistence;
+using ToDoList.Persistence.Repositories;
 
 [Collection("Sequential")]
 public class DeleteTests
@@ -15,16 +13,17 @@ public class DeleteTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context: context, repository: null);
-        TestDataHelper.ClearTestData(controller);
-        TestDataHelper.SeedTestData(controller);
-        var existingId = controller.GetStoredToDoItems().First().ToDoItemId;
+        var repository = new ToDoItemsRepository(context);
+        var controller = new ToDoItemsController(repository);
+        TestDataHelper.ClearTestData(repository);
+        TestDataHelper.SeedTestData(repository);
+        var existingId = repository.GetStoredToDoItems().First().ToDoItemId;
 
         // Act
         var result = controller.DeleteByid(existingId);
 
         // Assert
-        var actualItems = controller.GetStoredToDoItems();
+        var actualItems = repository.GetStoredToDoItems();
         Assert.IsType<NoContentResult>(result);
         Assert.DoesNotContain(actualItems, item => item.ToDoItemId == existingId);
     }
@@ -34,14 +33,13 @@ public class DeleteTests
     {
         // Arrange
         var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-        var controller = new ToDoItemsController(context: context, repository: null);
-        TestDataHelper.ClearTestData(controller);
-        TestDataHelper.SeedTestData(controller);
+        var repository = new ToDoItemsRepository(context);
+        var controller = new ToDoItemsController(repository);
+        TestDataHelper.ClearTestData(repository);
+        TestDataHelper.SeedTestData(repository);
 
         // Act
-        var invalidId = controller.GetStoredToDoItemsId().Last() +2;
-        // invalidId = invalidId[0];
-        // var invalidId = 1;
+        var invalidId = repository.GetStoredToDoItemsId().Last() + 2;
         var result = controller.DeleteByid(invalidId);
 
         // Assert

@@ -44,11 +44,6 @@ public class ToDoItemsController : ControllerBase
     {
         this.repository = repository;
     }
-    public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
-    {
-        this.context = context;
-        this.repository = repository;
-    }
 
     [HttpPost]
     public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
@@ -91,7 +86,7 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
 
-        return (itemsToGet is null)
+        return (itemsToGet is null || !itemsToGet.Any())
             ? NotFound() //404
             : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
     }
@@ -118,7 +113,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpPut("{todoItemId:int}")]
-    public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
+    public ActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
         //map to Domain object as soon as possible
         var updatedItem = request.ToDomain();
@@ -127,28 +122,12 @@ public class ToDoItemsController : ControllerBase
         //try to update the item by retrieving it with given id
         try
         {
-            //retrieve the item
-
-            // var itemIndexToUpdate = items.FindIndex(i => i.ToDoItemId == toDoItemId);
-            // if (itemIndexToUpdate == -1)
-            // {
-            //     return NotFound(); //404
-            // }
-            // updatedItem.ToDoItemId = toDoItemId;
-            // items[itemIndexToUpdate] = updatedItem;
-
-            // var itemToUpdate = context.ToDoItems.Find(toDoItemId);
             var itemToUpdate = repository.ReadById(toDoItemId);
             if (itemToUpdate == null)
             {
                 return NotFound();
             }
 
-            itemToUpdate.Name = updatedItem.Name;
-            itemToUpdate.Description = updatedItem.Description;
-            itemToUpdate.IsCompleted = updatedItem.IsCompleted;
-
-            // context.SaveChanges();
             repository.Update(updatedItem);
         }
         catch (Exception ex)
@@ -172,10 +151,6 @@ public class ToDoItemsController : ControllerBase
             }
 
             repository.DeleteById(todoItemId);
-
-            // // Option 2 - Found in EF documentation. Shorter code, single line. But I'm not throwing NotFound if the item to be deleted doesn't exist
-            // context.Remove(context.ToDoItems.Single(x => x.ToDoItemId == todoItemId));
-            context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -183,37 +158,5 @@ public class ToDoItemsController : ControllerBase
         }
 
         return NoContent(); //204
-    }
-
-    public void AddItemToStorage(ToDoItem item)
-    {
-        // items.Add(item);
-        // context.Add(item);
-        context.ToDoItems.Add(item);
-        context.SaveChanges();
-    }
-    public void ClearStorage()
-    {
-        // items.Clear();
-        // context.Database.ExecuteSqlRaw("TRUNCATE TABLE [ToDoItems]");
-        // var rows = from o in context.ToDoItems select o;
-        // foreach (var row in rows)
-        // {
-        //     context.ToDoItems.Remove(row);
-        // }
-        context.ToDoItems.ExecuteDelete();
-        context.SaveChanges();
-    }
-
-    public List<ToDoItem> GetStoredToDoItems()
-    {
-        var data = context.ToDoItems.ToList();
-        return data;
-    }
-
-    public List<int> GetStoredToDoItemsId()
-    {
-        var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
-        return data;
     }
 }
