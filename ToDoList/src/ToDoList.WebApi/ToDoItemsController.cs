@@ -59,7 +59,7 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
 
-        return (itemsToGet is null)
+        return (itemsToGet is null || !itemsToGet.Any())
             ? NotFound() //404
             : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
     }
@@ -96,9 +96,9 @@ public class ToDoItemsController : ControllerBase
                 return NotFound();
             }
 
-            itemToUpdate.Name = updatedItem.Name;
-            itemToUpdate.Description = updatedItem.Description;
-            itemToUpdate.IsCompleted = updatedItem.IsCompleted;
+            // itemToUpdate.Name = updatedItem.Name;
+            // itemToUpdate.Description = updatedItem.Description;
+            // itemToUpdate.IsCompleted = updatedItem.IsCompleted;
 
             await repository.UpdateAsync(updatedItem);
         }
