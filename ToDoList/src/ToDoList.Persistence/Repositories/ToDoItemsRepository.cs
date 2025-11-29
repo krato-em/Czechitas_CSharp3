@@ -3,6 +3,7 @@ namespace ToDoList.Persistence.Repositories
     using System.Threading.Tasks;
     using ToDoList.Domain.Models;
     using System.Collections.Generic;
+    using Microsoft.EntityFrameworkCore;
 
     public class ToDoItemsRepository : IRepository<ToDoItem>
     {
@@ -30,6 +31,29 @@ namespace ToDoList.Persistence.Repositories
             var item = context.ToDoItems.Find(id) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {id} not found.");
             context.ToDoItems.Remove(item);
             context.SaveChanges();
+        }
+
+        public void AddItemToStorage(ToDoItem item)
+        {
+            context.ToDoItems.Add(item);
+            context.SaveChanges();
+        }
+
+        public void ClearStorage()
+        {
+            context.ToDoItems.ExecuteDelete();
+            context.SaveChanges();
+        }
+
+        public List<ToDoItem> GetStoredToDoItems()
+        {
+            var data = context.ToDoItems.ToList();
+            return data;
+        }
+        public List<int> GetStoredToDoItemsId()
+        {
+            var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
+            return data;
         }
     }
 }

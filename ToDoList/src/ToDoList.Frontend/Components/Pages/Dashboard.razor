@@ -1,4 +1,8 @@
-﻿@using ToDoList.Frontend.Views
+﻿@using ToDoList.Frontend.Clients
+@using ToDoList.Frontend.Views
+
+@inject IToDoItemsClient toDoItemsClient
+
 <h2>Dashboard</h2>
 
 <table>
@@ -15,7 +19,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in items)
+        @foreach (var item in sortedData)
         {
             <tr>
                 <td>@item.ToDoItemId</td>
@@ -30,7 +34,7 @@
 
 
 @code {
-    List<ToDoItemView> items = new()
+    private List<ToDoItemView> testData = new()
 {
 new ToDoItemView( 1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
 new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
@@ -39,18 +43,19 @@ new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
 new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
 };
 
+    private List<ToDoItemView> sortedData = new();
     private bool isAscencingId = true;
     private bool isAscendingName = true;
     private void SortById()
     {
         if (isAscencingId)
         {
-            items = items.OrderByDescending(item => item.ToDoItemId).ToList();
+            sortedData = testData.OrderByDescending(item => item.ToDoItemId).ToList();
             isAscencingId = false;
         }
         else
         {
-            items = items.OrderBy(item => item.ToDoItemId).ToList();
+            sortedData = testData.OrderBy(item => item.ToDoItemId).ToList();
             isAscencingId = true;
         }
     }
@@ -59,14 +64,18 @@ new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
     {
         if (isAscendingName)
         {
-            items = items.OrderByDescending(item => item.Name).ToList();
+            sortedData = testData.OrderByDescending(item => item.Name).ToList();
             isAscendingName = false;
         }
         else
         {
-            items = items.OrderBy(item => item.Name).ToList();
+            sortedData = testData.OrderBy(item => item.Name).ToList();
             isAscendingName = true;
         }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        sortedData = await toDoItemsClient.ReadItemsAsync();
     }
 
     //ToDo: add method to show only not-completed items + method that shows all items again

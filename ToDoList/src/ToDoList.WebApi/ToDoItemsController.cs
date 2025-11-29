@@ -14,39 +14,9 @@ using ToDoList.Persistence.Repositories;
 [ApiController]
 public class ToDoItemsController : ControllerBase
 {
-
-    // public static List<ToDoItem> items = [];
-    // ToDoItemCreateRequestDto createRequestDto = new ToDoItemCreateRequestDto();
-
-    // private readonly IRepository<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
-    // public ToDoItemsController(IRepository<ToDoItem> repository)
-    // {
-    //     this.repository = repository;
-
-    //     // ToDoItem item = new ToDoItem
-    //     // {
-    //     //     Name = "Prvni ukol",
-    //     //     Description = "Prvni popisek",
-    //     //     IsCompleted = false
-    //     // };
-
-    //     // context.ToDoItems.Add(item);
-    //     // context.SaveChanges();
-    // }
-
-    // // public ToDoItemsController()
-    // // {
-    // // }
     private readonly IRepository<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
-    private readonly ToDoItemsContext context;
-
     public ToDoItemsController(IRepository<ToDoItem> repository)
     {
-        this.repository = repository;
-    }
-    public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
-    {
-        this.context = context;
         this.repository = repository;
     }
 
@@ -57,7 +27,7 @@ public class ToDoItemsController : ControllerBase
 
         try
         {
-            // This part is moved to ToDoItemsRepository class so that we don't have a tight coupling and that this class doesn't directly communicate with the db layer
+            // // This part is moved to ToDoItemsRepository class so that we don't have a tight coupling and that this class doesn't directly communicate with the db layer
             // context.ToDoItems.Add(item);
             // context.SaveChanges();
 
@@ -68,7 +38,6 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError);
         }
 
-        //respond to client
         return CreatedAtAction(
             nameof(ReadById),
             new { toDoItemId = item.ToDoItemId },
@@ -82,8 +51,6 @@ public class ToDoItemsController : ControllerBase
 
         try
         {
-            // itemsToGet = items;
-            // itemsToGet = context.ToDoItems.AsNoTracking().ToList();
             itemsToGet = repository.ReadAll();
         }
         catch (Exception ex)
@@ -102,9 +69,6 @@ public class ToDoItemsController : ControllerBase
         ToDoItem? itemToGet;
         try
         {
-            // itemToGet = items.Find(i => i.ToDoItemId == toDoItemId);
-            // itemToGet = context.ToDoItems.Single(item => item.ToDoItemId == toDoItemId);
-            // itemToGet = context.ToDoItems.AsNoTracking().Single(item => item.ToDoItemId == toDoItemId);
             itemToGet = repository.ReadById(toDoItemId);
         }
         catch (Exception ex)
@@ -118,26 +82,13 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpPut("{todoItemId:int}")]
-    public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
+    public ActionResult  UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
-        //map to Domain object as soon as possible
         var updatedItem = request.ToDomain();
         updatedItem.ToDoItemId = toDoItemId;
 
-        //try to update the item by retrieving it with given id
         try
         {
-            //retrieve the item
-
-            // var itemIndexToUpdate = items.FindIndex(i => i.ToDoItemId == toDoItemId);
-            // if (itemIndexToUpdate == -1)
-            // {
-            //     return NotFound(); //404
-            // }
-            // updatedItem.ToDoItemId = toDoItemId;
-            // items[itemIndexToUpdate] = updatedItem;
-
-            // var itemToUpdate = context.ToDoItems.Find(toDoItemId);
             var itemToUpdate = repository.ReadById(toDoItemId);
             if (itemToUpdate == null)
             {
@@ -148,7 +99,6 @@ public class ToDoItemsController : ControllerBase
             itemToUpdate.Description = updatedItem.Description;
             itemToUpdate.IsCompleted = updatedItem.IsCompleted;
 
-            // context.SaveChanges();
             repository.Update(updatedItem);
         }
         catch (Exception ex)
@@ -164,7 +114,6 @@ public class ToDoItemsController : ControllerBase
     {
         try
         {
-
             var itemToDelete = repository.ReadById(todoItemId);
             if (itemToDelete is null)
             {
@@ -172,10 +121,6 @@ public class ToDoItemsController : ControllerBase
             }
 
             repository.DeleteById(todoItemId);
-
-            // // Option 2 - Found in EF documentation. Shorter code, single line. But I'm not throwing NotFound if the item to be deleted doesn't exist
-            // context.Remove(context.ToDoItems.Single(x => x.ToDoItemId == todoItemId));
-            context.SaveChanges();
         }
         catch (Exception ex)
         {
@@ -183,37 +128,5 @@ public class ToDoItemsController : ControllerBase
         }
 
         return NoContent(); //204
-    }
-
-    public void AddItemToStorage(ToDoItem item)
-    {
-        // items.Add(item);
-        // context.Add(item);
-        context.ToDoItems.Add(item);
-        context.SaveChanges();
-    }
-    public void ClearStorage()
-    {
-        // items.Clear();
-        // context.Database.ExecuteSqlRaw("TRUNCATE TABLE [ToDoItems]");
-        // var rows = from o in context.ToDoItems select o;
-        // foreach (var row in rows)
-        // {
-        //     context.ToDoItems.Remove(row);
-        // }
-        context.ToDoItems.ExecuteDelete();
-        context.SaveChanges();
-    }
-
-    public List<ToDoItem> GetStoredToDoItems()
-    {
-        var data = context.ToDoItems.ToList();
-        return data;
-    }
-
-    public List<int> GetStoredToDoItemsId()
-    {
-        var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
-        return data;
     }
 }
