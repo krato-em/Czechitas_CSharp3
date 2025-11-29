@@ -1,6 +1,7 @@
 namespace ToDoList.WebApi;
 
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,14 +15,14 @@ using ToDoList.Persistence.Repositories;
 [ApiController]
 public class ToDoItemsController : ControllerBase
 {
-    private readonly IRepository<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
-    public ToDoItemsController(IRepository<ToDoItem> repository)
+    private readonly IRepositoryAsync<ToDoItem> repository; // we should not create references for classes, but for interfaces it's ok for safety reasons
+    public ToDoItemsController(IRepositoryAsync<ToDoItem> repository)
     {
         this.repository = repository;
     }
 
     [HttpPost]
-    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
+    public async Task<ActionResult<ToDoItemGetResponseDto>> Create(ToDoItemCreateRequestDto request)
     {
         var item = request.ToDomain();
 
@@ -31,7 +32,7 @@ public class ToDoItemsController : ControllerBase
             // context.ToDoItems.Add(item);
             // context.SaveChanges();
 
-            repository.Create(item);
+            await repository.CreateAsync(item);
         }
         catch (Exception ex)
         {
@@ -45,13 +46,13 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
+    public async Task<ActionResult<IEnumerable<ToDoItemGetResponseDto>>> Read()
     {
         IEnumerable<ToDoItem> itemsToGet;
 
         try
         {
-            itemsToGet = repository.ReadAll();
+            itemsToGet = await repository.ReadAllAsync();
         }
         catch (Exception ex)
         {
@@ -64,12 +65,12 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpGet("{todoItemId:int}")]
-    public ActionResult<ToDoItemGetResponseDto> ReadById(int toDoItemId)
+    public async Task<ActionResult<ToDoItemGetResponseDto>> ReadById(int toDoItemId)
     {
         ToDoItem? itemToGet;
         try
         {
-            itemToGet = repository.ReadById(toDoItemId);
+            itemToGet = await repository.ReadByIdAsync(toDoItemId);
         }
         catch (Exception ex)
         {
@@ -82,14 +83,14 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpPut("{todoItemId:int}")]
-    public ActionResult  UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
+    public async Task<ActionResult> UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
         var updatedItem = request.ToDomain();
         updatedItem.ToDoItemId = toDoItemId;
 
         try
         {
-            var itemToUpdate = repository.ReadById(toDoItemId);
+            var itemToUpdate = await repository.ReadByIdAsync(toDoItemId);
             if (itemToUpdate == null)
             {
                 return NotFound();
@@ -99,7 +100,7 @@ public class ToDoItemsController : ControllerBase
             itemToUpdate.Description = updatedItem.Description;
             itemToUpdate.IsCompleted = updatedItem.IsCompleted;
 
-            repository.Update(updatedItem);
+            await repository.UpdateAsync(updatedItem);
         }
         catch (Exception ex)
         {
@@ -110,17 +111,17 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpDelete("{todoItemId:int}")]
-    public IActionResult DeleteByid(int todoItemId)
+    public async Task<IActionResult> DeleteByid(int todoItemId)
     {
         try
         {
-            var itemToDelete = repository.ReadById(todoItemId);
+            var itemToDelete = await repository.ReadByIdAsync(todoItemId);
             if (itemToDelete is null)
             {
                 return NotFound(); //404
             }
 
-            repository.DeleteById(todoItemId);
+            await repository.DeleteByIdAsync(todoItemId);
         }
         catch (Exception ex)
         {
