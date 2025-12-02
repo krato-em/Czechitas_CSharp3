@@ -1,10 +1,8 @@
 namespace ToDoList.Test;
 
-using System;
-using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
-using ToDoList.Domain.Models;
 using ToDoList.Persistence;
+using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
 
 [Collection("Sequential")]
@@ -13,28 +11,25 @@ public class CreateTests
     [Fact]
     public void Create_WithValidData_ReturnsCreatedResult()
     {
-        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
-
         // Arrange
-        var controller = new ToDoItemsController(context: context, repository: null);
-        TestDataHelper.ClearTestData(controller);
+        var context = new ToDoItemsContext("DataSource=../../../IntegrationTests/data/localdb_test.db");
+        var repository = new ToDoItemsRepository(context);
+        var controller = new ToDoItemsController(repository);
+        TestDataHelper.ClearTestData(repository);
 
         // Act
         var request = new ToDoItemCreateRequestDto("addImte", "addDesc", true);
 
         var actionResult = controller.Create(request);
         var result = actionResult.Result;
-        // var result = actionResult as CreatedAtActionResult;
+        var dto = result.GetValue();
+
+        // Assert
         Assert.NotNull(result);
-        // Assert.Equal(nameof(ToDoItemsController.ReadById), result.ActionName);
-
-        // var dto = result.Value as ToDoItemGetResponseDto;
-        var dto = actionResult.Value as ToDoItemGetResponseDto;
-
         Assert.NotNull(dto);
         Assert.Equal("addImte", dto.Name);
         Assert.Equal("addDesc", dto.Description);
         Assert.Equal(request.IsCompleted, dto.IsCompleted);
-        Assert.Single(controller.GetStoredToDoItems());
+        Assert.Single(repository.GetStoredToDoItems());
     }
 }
