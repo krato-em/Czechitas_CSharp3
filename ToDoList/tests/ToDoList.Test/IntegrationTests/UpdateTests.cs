@@ -25,7 +25,7 @@ public class UpdateTests
         var updatedName = "Updated Item";
         var updatedDescription = "This item was updated";
         bool updatedIsCompleted = true;
-        var toDoItemDto = new ToDoItemUpdateRequestDto(updatedName, updatedDescription, updatedIsCompleted);
+        var toDoItemDto = new ToDoItemUpdateRequestDto(updatedName, updatedDescription, updatedIsCompleted, null);
 
         // Act
         var result = controller.UpdateById(existingId, toDoItemDto).Result;
@@ -53,7 +53,7 @@ public class UpdateTests
         TestDataHelper.SeedTestData(repository);
 
         var nonExistingId = repository.GetStoredToDoItemsId().Max() + 1;
-        var toDoItemDto = new ToDoItemUpdateRequestDto("Updated Item", "This item was updated", true);
+        var toDoItemDto = new ToDoItemUpdateRequestDto("Updated Item", "This item was updated", true, 2);
 
         // Act
         var result = controller.UpdateById(nonExistingId, toDoItemDto);
