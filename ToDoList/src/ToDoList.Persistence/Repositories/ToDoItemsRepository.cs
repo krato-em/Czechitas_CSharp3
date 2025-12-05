@@ -4,6 +4,8 @@ namespace ToDoList.Persistence.Repositories
     using ToDoList.Domain.Models;
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.CodeAnalysis.Host;
+    using Microsoft.CodeAnalysis.CSharp;
 
     public class ToDoItemsRepository : IRepositoryAsync<ToDoItem>
     {
@@ -17,8 +19,19 @@ namespace ToDoList.Persistence.Repositories
             await context.ToDoItems.AddAsync(item);
             await context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<ToDoItem>> ReadAllAsync() => await context.ToDoItems.ToListAsync();
-        public async Task<ToDoItem?> ReadByIdAsync(int id) => await context.ToDoItems.FindAsync(id);
+        // public async Task<IEnumerable<ToDoItem>> ReadAllAsync() => await context.ToDoItems.ToListAsync();
+        public async Task<IEnumerable<ToDoItem>> ReadAllAsync()
+        {
+            return await context.ToDoItems.Include(item => item.Category).ToListAsync();
+        }
+
+        // public async Task<ToDoItem?> ReadByIdAsync(int id) => await context.ToDoItems.FindAsync(id);
+        public async Task<ToDoItem?> ReadByIdAsync(int id)
+        {
+            // pomoci .Include() chci vracet Navigation Property a ne Foreign Key -> muze to totiz v budoucnu usetrit praci
+            return await context.ToDoItems.Include(item => item.Category).FirstOrDefaultAsync(item => item.ToDoItemId == id);
+        }
+
         public async Task UpdateAsync(ToDoItem item)
         {
             var foundItem = await context.ToDoItems.FindAsync(item.ToDoItemId) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {item.ToDoItemId} not found.");
@@ -55,28 +68,5 @@ namespace ToDoList.Persistence.Repositories
             var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
             return data;
         }
-
-        // public void AddItemToStorage(ToDoItem item)
-        // {
-        //     context.ToDoItems.Add(item);
-        //     context.SaveChanges();
-        // }
-
-        // public void ClearStorage()
-        // {
-        //     context.ToDoItems.ExecuteDelete();
-        //     context.SaveChanges();
-        // }
-
-        // public List<ToDoItem> GetStoredToDoItems()
-        // {
-        //     var data = context.ToDoItems.ToList();
-        //     return data;
-        // }
-        // public List<int> GetStoredToDoItemsId()
-        // {
-        //     var data = context.ToDoItems.Select(x => x.ToDoItemId).ToList();
-        //     return data;
-        // }
     }
 }
