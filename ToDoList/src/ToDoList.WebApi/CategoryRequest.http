@@ -1,0 +1,42 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@host=http://localhost
+@port=5000
+@endpoint=api/Categories
+
+
+//List all Categories
+GET {{host}}:{{port}}/{{endpoint}}
+
+###
+
+//Get specific Category by id
+@categoryToGetId = 1
+GET {{host}}:{{port}}/{{endpoint}}/{{categoryToGetId}}
+
+###
+
+//Add new Category
+POST {{host}}:{{port}}/{{endpoint}}
+Content-Type: application/json
+
+{
+  "CategoryName": "Home"
+}
+
+###
+
+//Update existing Category by id
+@categoryToUpdateId = 2
+
+PUT {{host}}:{{port}}/{{endpoint}}/{{categoryToUpdateId}}
+Content-Type: application/json
+
+{
+  "name": "Hobbies"
+}
+
+###
+
+//Delete existing Category by id
+@categoryToDeleteId = 0
+DELETE {{host}}:{{port}}/{{endpoint}}/{{categoryToDeleteId}}
