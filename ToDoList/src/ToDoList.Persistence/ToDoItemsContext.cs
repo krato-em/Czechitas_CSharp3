@@ -13,6 +13,7 @@ public class ToDoItemsContext : DbContext
     }
 
     public DbSet<ToDoItem> ToDoItems { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

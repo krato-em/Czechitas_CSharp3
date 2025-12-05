@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,4 +16,7 @@ public class ToDoItem
     [StringLength(250)] // klidne zadny znak, max 250
     public string Description { get; set; }
     public bool IsCompleted { get; set; }
+    [ForeignKey(nameof(Category))]  // toto mozna je redundantni - EF je chytre a doplni si to samo
+    public int? CategoryId { get; set; }
+    public Category? Category { get; set; }
 }
