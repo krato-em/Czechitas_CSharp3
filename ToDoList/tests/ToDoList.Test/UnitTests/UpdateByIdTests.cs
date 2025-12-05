@@ -27,7 +27,7 @@ namespace ToDoList.Test.UnitTests
             repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
             int someId = 1;
 
-            var updatedItemDto = new ToDoItemUpdateRequestDto("UpdatedItem", "This item was updated", true);
+            var updatedItemDto = new ToDoItemUpdateRequestDto("UpdatedItem", "This item was updated", true, null);
 
 
             // Act
@@ -53,7 +53,7 @@ namespace ToDoList.Test.UnitTests
             var controller = new ToDoItemsController(repositoryMock);
             repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(null as ToDoItem);
             int someId = 1;
-            var updatedItemDto = new ToDoItemUpdateRequestDto("UpdatedItem", "This item was updated", true);
+            var updatedItemDto = new ToDoItemUpdateRequestDto("UpdatedItem", "This item was updated", true, null);
 
             // Act
             var result = controller.UpdateById(someId, updatedItemDto).Result;
@@ -73,7 +73,7 @@ namespace ToDoList.Test.UnitTests
             repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
             repositoryMock.When(r => r.UpdateAsync(Arg.Any<ToDoItem>())).Do(r => throw new Exception());
             int someId = 1;
-            var updatedItemDto = new ToDoItemUpdateRequestDto("UpdatedItem", "This item was updated", true);
+            var updatedItemDto = new ToDoItemUpdateRequestDto("UpdatedItem", "This item was updated", true, null);
 
             // Act
             var result = controller.UpdateById(someId, updatedItemDto).Result;

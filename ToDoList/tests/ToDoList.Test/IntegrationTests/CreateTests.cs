@@ -18,7 +18,7 @@ public class CreateTests
         TestDataHelper.ClearTestData(repository);
 
         // Act
-        var request = new ToDoItemCreateRequestDto("addImte", "addDesc", true);
+        var request = new ToDoItemCreateRequestDto("addImte", "addDesc", true, null);
 
         var actionResult = controller.Create(request);
         var result = actionResult.Result;
