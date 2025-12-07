@@ -1,47 +1,60 @@
-﻿@using ToDoList.Frontend.Clients
+﻿@using ToDoList.Domain.Models
+@using ToDoList.Frontend.Clients
 @using ToDoList.Frontend.Views
 
 @inject IToDoItemsClient toDoItemsClient
+@inject NavigationManager NavigationManager
 
-<h2>Dashboard</h2>
+<div>
+    <h2>Dashboard</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Descriptioin</th>
-            <th>Completed?</th>
-        </tr>
-        <tr>
+    <table class="table table-hove mt-3r">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Descriptioin</th>
+                <th>Completed?</th>
+                <th>Actions</th>
+            </tr>
+            @* <tr>
             <td><button @onclick="SortById">Sort By ID</button></td>
             <td><button @onclick="SortByName">Sort By Name</button></td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in sortedData)
-        {
+        </tr> *@
+        </thead>
+        <thead>
             <tr>
-                <td>@item.ToDoItemId</td>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>@(item.IsCompleted ? "Finished" : "Not finished")</td>
+                <td><button class="btn btn-primary" @onclick="SortById">Sort By ID</button></td>
+                <td><button class="btn btn-secondary" @onclick="SortByName">Sort By Name</button></td>
+                <td></td>
+                <td></td>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sortedData)
+            {
+                <tr class="table-light">
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@(item.IsCompleted ? "Finished" : "Not finished")</td>
+                    <td><button class="btn btn-success" @onclick="() => EditItem(item)">Edit</button></td>
+                </tr>
 
-        }
-    </tbody>
-</table>
-
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
-    private List<ToDoItemView> testData = new()
+    @* private List<ToDoItemView> testData = new()
 {
 new ToDoItemView( 1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
 new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
 new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
 new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
 new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
-};
+}; *@
 
     private List<ToDoItemView> sortedData = new();
     private bool isAscencingId = true;
@@ -50,12 +63,12 @@ new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
     {
         if (isAscencingId)
         {
-            sortedData = testData.OrderByDescending(item => item.ToDoItemId).ToList();
+            sortedData = sortedData.OrderByDescending(item => item.Id).ToList();
             isAscencingId = false;
         }
         else
         {
-            sortedData = testData.OrderBy(item => item.ToDoItemId).ToList();
+            sortedData = sortedData.OrderBy(item => item.Id).ToList();
             isAscencingId = true;
         }
     }
@@ -64,14 +77,19 @@ new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
     {
         if (isAscendingName)
         {
-            sortedData = testData.OrderByDescending(item => item.Name).ToList();
+            sortedData = sortedData.OrderByDescending(item => item.Name).ToList();
             isAscendingName = false;
         }
         else
         {
-            sortedData = testData.OrderBy(item => item.Name).ToList();
+            sortedData = sortedData.OrderBy(item => item.Name).ToList();
             isAscendingName = true;
         }
+    }
+
+    public void EditItem(ToDoItemView toDoItem)
+    {
+        NavigationManager.NavigateTo($"/editToDoItem/{toDoItem.Id}");
     }
     protected override async Task OnInitializedAsync()
     {
