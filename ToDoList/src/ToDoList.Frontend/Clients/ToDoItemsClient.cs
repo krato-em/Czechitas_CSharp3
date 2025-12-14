@@ -43,43 +43,7 @@ public class ToDoItemsClient : IToDoItemsClient
     public async Task UpdateItemAsync(ToDoItemView item)
     {
         //TODO: zabalit to do Try/Catch
-
-        try
-        {
-            Console.WriteLine($"=== Starting Update ===");
-            Console.WriteLine($"Item ID: {item.Id}");
-            Console.WriteLine($"Item Name: {item.Name}");
-            Console.WriteLine($"Item IsCompleted: {item.IsCompleted}");
-
-            var itemRequest = new ToDoItemUpdateRequestDto(item.Name, item.Description, item.IsCompleted);
-
-            Console.WriteLine($"Sending PUT to: api/ToDoItems/{item.Id}");
-
-            // var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id:int}", itemRequest);
-            var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id}", itemRequest);
-
-            Console.WriteLine($"Response Status Code: {response.StatusCode}");
-            Console.WriteLine($"Response IsSuccess: {response.IsSuccessStatusCode}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error Content: {errorContent}");
-            }
-
-            // response.EnsureSuccessStatusCode();
-            Console.WriteLine("=== Update Successful ===");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception caught: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            throw;
-        }
-    }
-
-    public async Task DeleteItemAsync(ToDoItemView item)
-    {
-        await httpClient.DeleteAsync($"api/ToDoItems/{item.Id}");
+        var itemRequest = new ToDoItemUpdateRequestDto(item.Name, item.Description, item.IsCompleted);
+        var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id:int}", itemRequest);
     }
 }
