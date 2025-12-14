@@ -1,4 +1,5 @@
-﻿@using ToDoList.Domain.Models
+﻿@using System.Threading.Tasks
+@using ToDoList.Domain.Models
 @using ToDoList.Frontend.Clients
 @using ToDoList.Frontend.Views
 
@@ -17,10 +18,6 @@
                 <th>Completed?</th>
                 <th>Actions</th>
             </tr>
-            @* <tr>
-            <td><button @onclick="SortById">Sort By ID</button></td>
-            <td><button @onclick="SortByName">Sort By Name</button></td>
-        </tr> *@
         </thead>
         <thead>
             <tr>
@@ -39,6 +36,11 @@
                     <td>@item.Description</td>
                     <td>@(item.IsCompleted ? "Finished" : "Not finished")</td>
                     <td><button class="btn btn-success" @onclick="() => EditItem(item)">Edit</button></td>
+                    <td><button class="btn btn-success" @onclick="() => DeleteItem(item)">Delete</button></td>
+                    @if (item.IsCompleted == false)
+                    {
+                        <td><button class="btn btn-secondary" @onclick="() => MarkAsCompleted(item)">Mark as completed</button></td>
+                    }
                 </tr>
 
             }
@@ -95,6 +97,16 @@ new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
     {
         sortedData = await toDoItemsClient.ReadItemsAsync();
     }
-
+    public async Task DeleteItem(ToDoItemView toDoItem)
+    {
+        await toDoItemsClient.DeleteItemAsync(toDoItem);
+        sortedData = await toDoItemsClient.ReadItemsAsync();
+    }
+    public async Task MarkAsCompleted(ToDoItemView toDoItem)
+    {
+        toDoItem.IsCompleted = true;
+        await toDoItemsClient.UpdateItemAsync(toDoItem);
+        sortedData = await toDoItemsClient.ReadItemsAsync();
+    }
     //ToDo: add method to show only not-completed items + method that shows all items again
 }
