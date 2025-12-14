@@ -55,7 +55,8 @@ public class ToDoItemsClient : IToDoItemsClient
 
             Console.WriteLine($"Sending PUT to: api/ToDoItems/{item.Id}");
 
-            var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id:int}", itemRequest);
+            // var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id:int}", itemRequest);
+            var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id}", itemRequest);
 
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
             Console.WriteLine($"Response IsSuccess: {response.IsSuccessStatusCode}");
