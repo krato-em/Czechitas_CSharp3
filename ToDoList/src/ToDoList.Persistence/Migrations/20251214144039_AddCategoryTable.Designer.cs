@@ -10,7 +10,7 @@ using ToDoList.Persistence;
 namespace ToDoList.Persistence.Migrations
 {
     [DbContext(typeof(ToDoItemsContext))]
-    [Migration("20251214132611_AddCategoryTable")]
+    [Migration("20251214144039_AddCategoryTable")]
     partial class AddCategoryTable
     {
         /// <inheritdoc />
